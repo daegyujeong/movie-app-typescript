@@ -1,59 +1,71 @@
-const BASE_URL = 'https://movies-api.nomadcoders.workers.dev';
-
-// Movie types
+// API Types
 export interface Movie {
   id: number;
-  backdrop_path: string | null;
-  poster_path: string | null;
   title: string;
   overview: string;
-  release_date: string;
+  poster_path: string;
+  backdrop_path: string;
   vote_average: number;
+  release_date: string;
+}
+
+export interface MovieDetails extends Movie {
   runtime?: number;
   budget?: number;
   revenue?: number;
+  genres?: Array<{ id: number; name: string; }>;
   homepage?: string;
-  genres?: Genre[];
 }
 
-export interface Genre {
-  id: number;
-  name: string;
+// API Constants
+const BASE_URL = 'https://movies-api.nomadcoders.workers.dev';
+
+// API Endpoints
+export async function getPopular(): Promise<{ results: Movie[] }> {
+  const response = await fetch(`${BASE_URL}/popular`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch popular movies');
+  }
+  return response.json();
 }
 
-export interface MovieResponse {
-  page: number;
-  results: Movie[];
-  total_pages: number;
-  total_results: number;
+export async function getNowPlaying(): Promise<{ results: Movie[] }> {
+  const response = await fetch(`${BASE_URL}/now-playing`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch now playing movies');
+  }
+  return response.json();
 }
 
-// API functions - Using the Nomad Coders format
-export function getPopular() {
-  return fetch(`${BASE_URL}/popular`).then((r) => r.json());
+export async function getComingSoon(): Promise<{ results: Movie[] }> {
+  const response = await fetch(`${BASE_URL}/coming-soon`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch upcoming movies');
+  }
+  return response.json();
 }
 
-export function getNowPlaying() {
-  return fetch(`${BASE_URL}/now-playing`).then((r) => r.json());
+export async function getMovie(id: number): Promise<MovieDetails> {
+  const response = await fetch(`${BASE_URL}/movie?id=${id}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch movie with id: ${id}`);
+  }
+  return response.json();
 }
 
-export function getComingSoon() {
-  return fetch(`${BASE_URL}/coming-soon`).then((r) => r.json());
+// Image URL Helpers
+export function makeImagePath(path: string | null): string {
+  if (!path) {
+    return '/placeholder-poster.jpg';
+  }
+  return `https://image.tmdb.org/t/p/w500${path}`;
 }
 
-export function getMovie(id: number) {
-  return fetch(`${BASE_URL}/movie?id=${id}`).then((r) => r.json());
-}
-
-// Image path helper functions
-export function makeImagePath(image: string | null) {
-  if (!image) return '/placeholder-poster.jpg';
-  return `https://image.tmdb.org/t/p/w500${image}`;
-}
-
-export function makeBgPath(image: string | null) {
-  if (!image) return '/placeholder-backdrop.jpg';
-  return `https://image.tmdb.org/t/p/original${image}`;
+export function makeBgPath(path: string | null): string {
+  if (!path) {
+    return '/placeholder-backdrop.jpg';
+  }
+  return `https://image.tmdb.org/t/p/original${path}`;
 }
 
 // Legacy API object for backward compatibility with existing code
