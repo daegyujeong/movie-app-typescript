@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
-import { Movie, getPosterPath } from "../api/api";
+import { Movie, makeImagePath } from "../api/api";
 import { getRatingColor } from "../utils/helpers";
 
 interface MovieCardProps {
@@ -116,7 +116,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick }) => {
     >
       <PosterContainer>
         <Poster 
-          src={getPosterPath(movie.poster_path)} 
+          src={makeImagePath(movie.poster_path)} 
           alt={movie.title} 
           loading="lazy"
         />
