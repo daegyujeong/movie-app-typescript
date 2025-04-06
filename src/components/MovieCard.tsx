@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { Movie, makeImagePath } from "../api/api";
-import { getRatingColor } from "../utils/helpers";
 
 interface MovieCardProps {
   movie: Movie;
@@ -10,122 +9,61 @@ interface MovieCardProps {
 }
 
 const Card = styled(motion.div)`
+  position: relative;
+  cursor: pointer;
   border-radius: ${({ theme }) => theme.borderRadius.medium};
   overflow: hidden;
-  cursor: pointer;
-  position: relative;
   background-color: ${({ theme }) => theme.colors.secondary};
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-`;
-
-const PosterContainer = styled.div`
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 2/3;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const Poster = styled.img`
   width: 100%;
-  height: 100%;
+  height: 300px;
   object-fit: cover;
-  transition: transform 0.3s ease;
+`;
 
-  ${Card}:hover & {
-    transform: scale(1.05);
-  }
+const Info = styled(motion.div)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: ${({ theme }) => theme.spacing.medium};
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
 `;
 
 const Title = styled.h3`
-  padding: ${({ theme }) => theme.spacing.medium};
   font-size: ${({ theme }) => theme.fontSizes.medium};
-  text-align: center;
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-bottom: ${({ theme }) => theme.spacing.small};
+  color: ${({ theme }) => theme.colors.text};
 `;
 
-const Rating = styled.div<{ rating: number }>`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: ${({ rating }) => getRatingColor(rating)};
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const Rating = styled.div`
   font-size: ${({ theme }) => theme.fontSizes.small};
-  font-weight: bold;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: ${({ theme }) => theme.colors.text};
 `;
-
-const ReleaseYear = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  padding: 4px 8px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  font-size: ${({ theme }) => theme.fontSizes.small};
-  border-radius: ${({ theme }) => theme.borderRadius.small};
-`;
-
-// Card animations
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { 
-      type: "spring", 
-      stiffness: 300,
-      damping: 20 
-    }
-  },
-  hover: { 
-    y: -10,
-    boxShadow: "0 10px 20px rgba(0, 0, 0, 0.3)",
-    transition: { 
-      type: "spring", 
-      stiffness: 400, 
-      damping: 10 
-    }
-  }
-};
 
 const MovieCard: React.FC<MovieCardProps> = ({ movie, onClick }) => {
-  const releaseYear = movie.release_date 
-    ? new Date(movie.release_date).getFullYear() 
-    : null;
-
   return (
     <Card
       layoutId={`movie-${movie.id}`}
       onClick={onClick}
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      whileHover="hover"
-      transition={{ type: "spring", stiffness: 300 }}
+      whileHover={{
+        y: -5,
+        transition: { duration: 0.2 }
+      }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
     >
-      <PosterContainer>
-        <Poster 
-          src={makeImagePath(movie.poster_path)} 
-          alt={movie.title} 
-          loading="lazy"
-        />
-        <Rating rating={movie.vote_average}>
-          {movie.vote_average.toFixed(1)}
-        </Rating>
-        {releaseYear && <ReleaseYear>{releaseYear}</ReleaseYear>}
-      </PosterContainer>
-      <Title>{movie.title}</Title>
+      <Poster
+        src={makeImagePath(movie.poster_path)}
+        alt={movie.title}
+      />
+      <Info>
+        <Title>{movie.title}</Title>
+        <Rating>★ {movie.vote_average.toFixed(1)}</Rating>
+      </Info>
     </Card>
   );
 };

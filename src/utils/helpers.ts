@@ -5,7 +5,7 @@ export const formatDate = (dateString: string): string => {
     month: 'long',
     day: 'numeric'
   };
-  
+
   return new Date(dateString).toLocaleDateString('en-US', options);
 };
 
@@ -23,18 +23,18 @@ export const formatCurrency = (amount: number): string => {
 export const formatRuntime = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
-  
+
   if (hours === 0) {
     return `${remainingMinutes}m`;
   }
-  
+
   return `${hours}h ${remainingMinutes}m`;
 };
 
 // Truncate text with ellipsis
 export const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text;
-  
+
   return `${text.slice(0, maxLength)}...`;
 };
 
@@ -44,8 +44,9 @@ export const getYearFromDate = (dateString: string): string => {
 };
 
 // Calculate average color from vote average (for visualizing ratings)
-export const getRatingColor = (voteAverage: number): string => {
-  if (voteAverage >= 7.5) return '#4CAF50'; // Good (green)
-  if (voteAverage >= 6) return '#FFC107';   // Average (yellow/amber)
-  return '#F44336';                         // Poor (red)
+export const getRatingColor = (rating: number): string => {
+  if (rating >= 8) return '#4CAF50'; // Green
+  if (rating >= 6) return '#FFC107'; // Yellow
+  if (rating >= 4) return '#FF9800'; // Orange
+  return '#F44336'; // Red
 };

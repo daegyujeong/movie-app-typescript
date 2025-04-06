@@ -1,16 +1,12 @@
-import { useQuery } from "react-query";
-import { getMovie, Movie } from "../api/api";
+import { useQuery } from '@tanstack/react-query';
+import { getMovie, MovieDetails } from '../api/api';
 
-const useMovieDetails = (movieId: number, enabled: boolean = true) => {
-  return useQuery<Movie>(
-    ["movieDetails", movieId],
-    () => getMovie(movieId),
-    {
-      enabled,
-      staleTime: 10 * 60 * 1000, // 10 minutes
-      refetchOnWindowFocus: false,
-    }
-  );
-};
-
-export default useMovieDetails;
+export default function useMovieDetails(movieId: number) {
+  return useQuery<MovieDetails, Error>({
+    queryKey: ['movie', movieId],
+    queryFn: () => getMovie(movieId),
+    enabled: !!movieId,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes
+  });
+}

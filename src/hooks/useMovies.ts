@@ -1,12 +1,14 @@
-import { useQuery } from "react-query";
-import { getPopular, getComingSoon, getNowPlaying, MovieResponse } from "../api/api";
+import { useQuery } from "@tanstack/react-query";
+import { getPopular, getComingSoon, getNowPlaying, Movie } from "../api/api";
 
 type MovieCategory = "popular" | "upcoming" | "nowPlaying";
 
-const useMovies = (category: MovieCategory) => {
-  const queryKey = `${category}Movies`;
-  
-  const fetchMovies = async (): Promise<MovieResponse> => {
+interface MovieQueryResult {
+  results: Movie[];
+}
+
+export default function useMovies(category: MovieCategory) {
+  const getMoviesByCategory = () => {
     switch (category) {
       case "popular":
         return getPopular();
@@ -15,18 +17,14 @@ const useMovies = (category: MovieCategory) => {
       case "nowPlaying":
         return getNowPlaying();
       default:
-        return getPopular();
+        throw new Error(`Invalid category: ${category}`);
     }
   };
-  
-  return useQuery<MovieResponse>(
-    queryKey,
-    fetchMovies,
-    {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      refetchOnWindowFocus: false,
-    }
-  );
-};
 
-export default useMovies;
+  return useQuery<MovieQueryResult, Error>({
+    queryKey: ["movies", category],
+    queryFn: getMoviesByCategory,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+  });
+}
