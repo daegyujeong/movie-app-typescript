@@ -1,6 +1,4 @@
-const API_KEY = '10923b261ba94d897ac6b81148314a3f';
-const BASE_URL = 'https://api.themoviedb.org/3';
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p';
+const BASE_URL = 'https://movies-api.nomadcoders.workers.dev';
 
 // Movie types
 export interface Movie {
@@ -30,34 +28,51 @@ export interface MovieResponse {
   total_results: number;
 }
 
-// API endpoints
+// API functions - Using the Nomad Coders format
+export function getPopular() {
+  return fetch(`${BASE_URL}/popular`).then((r) => r.json());
+}
+
+export function getNowPlaying() {
+  return fetch(`${BASE_URL}/now-playing`).then((r) => r.json());
+}
+
+export function getComingSoon() {
+  return fetch(`${BASE_URL}/coming-soon`).then((r) => r.json());
+}
+
+export function getMovie(id: number) {
+  return fetch(`${BASE_URL}/movie?id=${id}`).then((r) => r.json());
+}
+
+// Image path helper functions
+export function makeImagePath(image: string | null) {
+  if (!image) return '/placeholder-poster.jpg';
+  return `https://image.tmdb.org/t/p/w500${image}`;
+}
+
+export function makeBgPath(image: string | null) {
+  if (!image) return '/placeholder-backdrop.jpg';
+  return `https://image.tmdb.org/t/p/original${image}`;
+}
+
+// Legacy API object for backward compatibility with existing code
 export const api = {
-  getPopular: () =>
-    `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`,
-
-  getComingSoon: () =>
-    `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`,
-
-  getNowPlaying: () =>
-    `${BASE_URL}/movie/now_playing?api_key=${API_KEY}&language=en-US&page=1`,
-
-  getMovieDetails: (movieId: number) =>
-    `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=en-US&append_to_response=videos,images`,
+  getPopular: () => `${BASE_URL}/popular`,
+  getComingSoon: () => `${BASE_URL}/coming-soon`,
+  getNowPlaying: () => `${BASE_URL}/now-playing`,
+  getMovieDetails: (movieId: number) => `${BASE_URL}/movie?id=${movieId}`,
 };
 
-// Helper functions for image paths
-export const getImagePath = (
-  path: string | null,
-  size: string = 'original'
-): string => {
-  if (!path) return '/placeholder-poster.jpg';
-  return `${IMAGE_BASE_URL}/${size}${path}`;
+// Legacy helper functions with new naming aliases
+export const getPosterPath = makeImagePath;
+export const getBackdropPath = makeBgPath;
+
+export default {
+  getPopular,
+  getNowPlaying,
+  getComingSoon,
+  getMovie,
+  makeImagePath,
+  makeBgPath
 };
-
-export const getPosterPath = (path: string | null): string =>
-  getImagePath(path, 'w500');
-
-export const getBackdropPath = (path: string | null): string =>
-  getImagePath(path, 'w1280');
-
-export default api;
