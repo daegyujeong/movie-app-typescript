@@ -36,7 +36,7 @@ const ModalContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing.xxlarge};
 `;
 
-const CloseButton = styled.button`
+const CloseButton = styled(motion.button)`
   position: absolute;
   top: ${({ theme }) => theme.spacing.medium};
   right: ${({ theme }) => theme.spacing.medium};
@@ -50,6 +50,8 @@ const CloseButton = styled.button`
   align-items: center;
   justify-content: center;
   z-index: 10;
+  border: none;
+  cursor: pointer;
   
   &:hover {
     background-color: ${({ theme }) => theme.colors.primary};
@@ -118,11 +120,11 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
   // Animation variants
   const overlayVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
       transition: { duration: 0.3 }
     },
-    exit: { 
+    exit: {
       opacity: 0,
       transition: { duration: 0.3 }
     }
@@ -130,18 +132,18 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
 
   const modalVariants = {
     hidden: { y: 50, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
-      transition: { 
-        type: "spring", 
-        damping: 25, 
+      transition: {
+        type: "spring",
+        damping: 25,
         stiffness: 300,
         delay: 0.1
       }
     },
-    exit: { 
-      y: 50, 
+    exit: {
+      y: 50,
       opacity: 0,
       transition: { duration: 0.3 }
     }
@@ -149,9 +151,9 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
 
   const contentVariants = {
     hidden: { opacity: 0 },
-    visible: { 
+    visible: {
       opacity: 1,
-      transition: { 
+      transition: {
         staggerChildren: 0.1,
         delayChildren: 0.3
       }
@@ -160,8 +162,8 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: { 
-      y: 0, 
+    visible: {
+      y: 0,
       opacity: 1,
       transition: { type: "spring", stiffness: 300, damping: 25 }
     }
@@ -180,7 +182,7 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
         onClick={(e) => e.stopPropagation()}
         variants={modalVariants}
       >
-        <CloseButton 
+        <CloseButton
           onClick={onClose}
           whileHover={{ backgroundColor: "rgba(255, 0, 0, 0.8)", scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -199,11 +201,11 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
           <Title as={motion.h1} variants={itemVariants}>
             {movieData.title}
           </Title>
-          
+
           <Overview as={motion.p} variants={itemVariants}>
             {movieData.overview}
           </Overview>
-          
+
           <InfoGrid as={motion.div} variants={itemVariants}>
             <InfoItem as={motion.div} variants={itemVariants}>
               <InfoLabel>Release Date</InfoLabel>
@@ -215,16 +217,16 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
                 })}
               </InfoValue>
             </InfoItem>
-            
+
             <InfoItem as={motion.div} variants={itemVariants}>
               <InfoLabel>Rating</InfoLabel>
-              <InfoValue 
+              <InfoValue
                 style={{ color: getRatingColor(movieData.vote_average) }}
               >
                 {movieData.vote_average.toFixed(1)} / 10
               </InfoValue>
             </InfoItem>
-            
+
             {!isLoading && fullMovieDetails && (
               <>
                 {fullMovieDetails.runtime && (
@@ -233,21 +235,21 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
                     <InfoValue>{formatRuntime(fullMovieDetails.runtime)}</InfoValue>
                   </InfoItem>
                 )}
-                
+
                 {fullMovieDetails.budget && fullMovieDetails.budget > 0 && (
                   <InfoItem as={motion.div} variants={itemVariants}>
                     <InfoLabel>Budget</InfoLabel>
                     <InfoValue>{formatCurrency(fullMovieDetails.budget)}</InfoValue>
                   </InfoItem>
                 )}
-                
+
                 {fullMovieDetails.revenue && fullMovieDetails.revenue > 0 && (
                   <InfoItem as={motion.div} variants={itemVariants}>
                     <InfoLabel>Revenue</InfoLabel>
                     <InfoValue>{formatCurrency(fullMovieDetails.revenue)}</InfoValue>
                   </InfoItem>
                 )}
-                
+
                 {fullMovieDetails.genres && fullMovieDetails.genres.length > 0 && (
                   <InfoItem as={motion.div} variants={itemVariants}>
                     <InfoLabel>Genres</InfoLabel>
@@ -256,14 +258,14 @@ const MovieModal: React.FC<MovieModalProps> = ({ movie, onClose }) => {
                     </InfoValue>
                   </InfoItem>
                 )}
-                
+
                 {fullMovieDetails.homepage && (
                   <InfoItem as={motion.div} variants={itemVariants}>
                     <InfoLabel>Homepage</InfoLabel>
                     <InfoValue>
-                      <motion.a 
-                        href={fullMovieDetails.homepage} 
-                        target="_blank" 
+                      <motion.a
+                        href={fullMovieDetails.homepage}
+                        target="_blank"
                         rel="noopener noreferrer"
                         whileHover={{ color: "#ff0000" }}
                       >
